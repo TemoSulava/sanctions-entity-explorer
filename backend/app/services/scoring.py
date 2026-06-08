@@ -10,13 +10,9 @@ lowercases and strips punctuation so "al madar" matches "Al-Madar". Scores are
 normalised from rapidfuzz's 0–100 to 0–1.
 """
 
-from typing import Literal
-
 from rapidfuzz import fuzz, utils
 
-from app.schemas import Entity
-
-MatchedOn = Literal["name", "alias"]
+from app.schemas import Entity, MatchedOn
 
 
 def score(query: str, entity: Entity) -> tuple[float, MatchedOn]:

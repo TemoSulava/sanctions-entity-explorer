@@ -11,6 +11,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict
 
 EntityType = Literal["organization", "person", "vessel"]
+MatchedOn = Literal["name", "alias"]
 
 
 class Relation(BaseModel):
@@ -33,3 +34,21 @@ class Entity(BaseModel):
     list_date: str
     remarks: str | None = None
     relations: list[Relation]
+
+
+# --- Search API DTOs ---
+
+
+class SearchResult(BaseModel):
+    id: str
+    name: str
+    type: EntityType
+    primary_country: str | None
+    programs: list[str]
+    score: float
+    matched_on: MatchedOn
+
+
+class SearchResponse(BaseModel):
+    query: str
+    results: list[SearchResult]
