@@ -20,6 +20,9 @@ def score(query: str, entity: Entity) -> tuple[float, MatchedOn]:
 
     Returns the 0–1 score and which field produced it ("name" or "alias").
     """
+    if not query.strip():
+        return 0.0, "name"
+
     best_score = fuzz.WRatio(query, entity.name, processor=utils.default_process) / 100.0
     best_matched_on: MatchedOn = "name"
 
