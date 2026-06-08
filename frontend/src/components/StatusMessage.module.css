@@ -1,0 +1,67 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 9px,
+      rgba(255, 255, 255, 0.012) 9px,
+      rgba(255, 255, 255, 0.012) 10px
+    );
+}
+
+.glyph {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--text-faint);
+}
+
+.title {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.detail {
+  font-size: 0.82rem;
+  color: var(--text-faint);
+  max-width: 38ch;
+}
+
+.wrap[data-variant="loading"] .glyph {
+  color: var(--signal);
+  animation: spin 1.4s linear infinite;
+}
+
+.wrap[data-variant="error"] {
+  border-color: rgba(229, 72, 77, 0.4);
+}
+
+.wrap[data-variant="error"] .glyph {
+  color: var(--alert);
+}
+
+.wrap[data-variant="error"] .title {
+  color: var(--alert);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap[data-variant="loading"] .glyph {
+    animation: none;
+  }
+}

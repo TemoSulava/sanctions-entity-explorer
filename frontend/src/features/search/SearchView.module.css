@@ -1,0 +1,109 @@
+.page {
+  min-height: 100%;
+  padding: clamp(2.5rem, 7vh, 6rem) 1.5rem 4rem;
+}
+
+.shell {
+  width: 100%;
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+/* Masthead */
+.masthead {
+  margin-bottom: 2.25rem;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--signal);
+  margin-bottom: 1rem;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: var(--signal);
+  opacity: 0.7;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.lede {
+  margin-top: 0.9rem;
+  max-width: 54ch;
+  color: var(--text-muted);
+  font-size: 0.98rem;
+}
+
+/* Search bar */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 3.5rem;
+  padding: 0 1.1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.searchBar:focus-within {
+  border-color: var(--signal);
+  box-shadow:
+    var(--shadow),
+    0 0 0 3px var(--signal-soft);
+}
+
+.searchGlyph {
+  font-size: 1.25rem;
+  color: var(--signal);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+
+.input::placeholder {
+  color: var(--text-faint);
+}
+
+.count {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+}
+
+/* Results */
+.results {
+  margin-top: 1.5rem;
+}
