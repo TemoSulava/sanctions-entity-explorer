@@ -6,4 +6,21 @@ requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
+    "rapidfuzz>=3.9",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0",
+    "httpx>=0.28",
+    "ruff>=0.15",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
