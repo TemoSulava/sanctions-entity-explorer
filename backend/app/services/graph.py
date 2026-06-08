@@ -46,10 +46,8 @@ def build_graph(repo: EntityRepository, entity_id: str) -> GraphResponse:
                 )
             )
 
-    center_summary = EntitySummary(
-        id=center.id,
-        name=center.name,
-        type=center.type,
-        primary_country=center.primary_country,
+    return GraphResponse(
+        center=EntitySummary.from_entity(center),
+        nodes=nodes,
+        edges=edges,
     )
-    return GraphResponse(center=center_summary, nodes=nodes, edges=edges)

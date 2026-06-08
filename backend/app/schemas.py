@@ -6,7 +6,7 @@ rather than silently dropping unexpected fields. Response/DTO models for the
 search and graph endpoints are added alongside their endpoints.
 """
 
-from typing import Literal
+from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict
 
@@ -67,6 +67,15 @@ class EntitySummary(BaseModel):
     name: str
     type: EntityType
     primary_country: str | None
+
+    @classmethod
+    def from_entity(cls, entity: Entity) -> Self:
+        return cls(
+            id=entity.id,
+            name=entity.name,
+            type=entity.type,
+            primary_country=entity.primary_country,
+        )
 
 
 class GraphNode(BaseModel):
