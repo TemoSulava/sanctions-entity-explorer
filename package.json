@@ -1,0 +1,16 @@
+{
+  "name": "sanctions-entity-explorer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Run the Sanctions Entity Explorer backend and frontend together from the repo root.",
+  "scripts": {
+    "setup": "uv sync --directory backend && pnpm --dir frontend install",
+    "postinstall": "pnpm run setup",
+    "dev": "concurrently -k -n api,web -c yellow,cyan \"uv run --directory backend uvicorn app.main:app --reload --port 8000\" \"pnpm --dir frontend dev\"",
+    "test": "uv run --directory backend pytest && pnpm --dir frontend test",
+    "check": "uv run --directory backend ruff check . && uv run --directory backend pytest && pnpm --dir frontend typecheck && pnpm --dir frontend test && pnpm --dir frontend build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

@@ -1,78 +1,122 @@
-# Tangos — Fullstack Take-Home: Sanctions Entity Explorer
+# Sanctions Entity Explorer
 
-This take-home is designed to take **2 hours**.
+A small fullstack slice of a compliance-investigation workflow: **search** sanctions
+entities by name or alias (ranked fuzzy matches), then **visualize** a chosen entity's
+relationships as a static radial graph.
 
-## Context
+- **Backend** — FastAPI (Python 3.14+), a read-only REST API over `data/sdn_sample.json`.
+- **Frontend** — React 19 + TypeScript + Vite, two views (search + graph).
 
-Tangos is an AI-powered compliance investigation platform. Investigators routinely screen organizations against sanctions and watchlist datasets (SDN/OFAC, UK HMT, EU consolidated list) and explore the network of relationships around any flagged entity. This exercise is a small, self-contained slice of that workflow.
+---
 
-## What you'll build
+## Prerequisites
 
-A small fullstack app — **Sanctions Entity Explorer** — that lets a compliance investigator:
+| Tool | Version | Notes |
+|------|---------|-------|
+| [uv](https://docs.astral.sh/uv/) | latest | Manages Python; **fetches CPython 3.14 automatically** — no system Python 3.14 needed. Must be on your `PATH`. |
+| Node.js | ≥ 20 | |
+| [pnpm](https://pnpm.io/) | ≥ 9 | `corepack enable` is the easiest way to get it. |
 
-1. **Search** for an organization, person, or vessel by name against a provided dataset, and see ranked candidate matches.
-2. **Visualize** the chosen entity's **graph of relations** — directly connected entities and the relationship types (e.g., `operates`, `officer_of`, `sibling`, `trade_partner`).
+> The data fixture (`data/sdn_sample.json`) is the source of truth and is loaded once on
+> backend startup. Do not modify it.
 
-The dataset (`data/sdn_sample.json`) is a small fixture (~32 entries) mimicking the structure of public sanctions lists, augmented with a `relations` array per entity. Treat it as your source of truth — load it on backend startup; do not modify it.
+---
 
-## Starter scaffold
+## Quick start (one command from the repo root)
 
-Both `backend/` and `frontend/` ship with a runnable hello-world (FastAPI + `/api/health` endpoint; Vite + React 19 + TypeScript strict). See each folder's `README.md` for run commands. Build on top — replace anything that doesn't fit.
+```bash
+pnpm install   # bootstraps BOTH apps: runs `uv sync` for the backend and `pnpm install` for the frontend
+pnpm dev       # starts the API (:8000) and the web app (:5173) together
+```
 
-## Requirements
+Then open **http://localhost:5173**.
 
-### Backend (Python 3.14+, FastAPI)
+`pnpm install` runs a `postinstall` that installs both apps, so you never have to `cd` into
+`backend/` and `frontend/` separately. `pnpm dev` runs both processes with one command (via
+[`concurrently`](https://www.npmjs.com/package/concurrently)); `Ctrl-C` stops both.
 
-A read-only REST API over the fixture. It must support:
+### Other root commands
 
-- Searching for entities by name (considering both `name` and `aliases`), returning ranked candidates with a match score. The query won't always be an exact match — investigators type partial names and variant spellings. Surface plausible candidates and rank them sensibly.
-- Returning the relations graph for a given entity — nodes and edges suitable for direct rendering on the frontend.
+```bash
+pnpm test    # backend pytest + frontend vitest
+pnpm check   # full gate: ruff + pytest + typecheck + vitest + production build
+pnpm setup   # re-install both apps' dependencies
+```
 
-### Frontend (React + TypeScript)
+### Running an app on its own
 
-Two views:
+You rarely need to, but each app is self-contained — see
+[`backend/README.md`](backend/README.md) and [`frontend/README.md`](frontend/README.md).
 
-1. **Search view** — text input (debounced, ~300ms), results table showing entity name, type, primary country, programs, and the match score. Each row is clickable and navigates to the graph view.
-2. **Graph view** — a **non-interactive** graph visualization of the selected entity's relations. *Non-interactive* means a static rendering — no need to handle clicks on nodes, drags, or zoom. The selected entity is the central node; directly connected entities are rendered as neighboring nodes; edges are labeled with the relation type.
+---
 
-### What we explicitly do *not* grade
+## How it fits together
 
-- Pixel-perfect design — usable is enough.
-- Auth / users — single-user assumption is fine.
-- Accessibility, responsive layouts, or mobile — desktop is enough.
-- Performance optimization — clear correctness beats clever memoization.
+- The frontend calls **relative `/api/...`** paths. In dev, Vite proxies `/api` → `http://localhost:8000`
+  (`frontend/vite.config.ts`), so the app is single-origin with no hardcoded host; a same-origin
+  production deploy works identically. Backend CORS stays configured for `localhost:5173` as a safety net.
 
-## Use AI assistants
+### API
 
-We expect you to use AI coding assistants (Cursor, Claude Code, GitHub Copilot, ChatGPT, etc.) — that's how Tangos engineers work day to day. Free options exist for all of them if you don't have a paid plan. **No API key is needed for this exercise** (the product itself doesn't call an LLM).
+| Method & path | Purpose |
+|---|---|
+| `GET /api/health` | Liveness check. |
+| `GET /api/search?q={str}&limit={1–25}` | Ranked fuzzy matches over name + aliases. `q` and `limit` (default 10) are optional; empty/whitespace `q` → `{results: []}`. |
+| `GET /api/entities/{id}` | Single entity summary. `404` if unknown. |
+| `GET /api/entities/{id}/graph` | Center + neighbor nodes + edges, shaped for direct rendering. `404` if unknown. |
 
-What we want to see in your AI usage:
+Interactive docs at **http://localhost:8000/docs** when the backend is running.
 
-- **Reviewed and owned code.** Don't accept AI output blindly. We'll spot it.
-- **Reasonable commit history** — a series of small, reviewable commits beats one giant "AI dump."
+---
 
-## Deliverables
+## Design decisions
 
-A git repository (zip is fine if you'd rather not push to GitHub) containing:
+The guiding principle is **proportionality** — clean, interview-defensible architecture with
+zero anti-patterns and zero over-engineering for a small, fixed dataset.
+
+**Backend**
+- **One dependency that serves the requirement:** `rapidfuzz`. Its `WRatio` (with
+  `default_process`) tolerates word reordering, partial names, and variant spellings — exactly
+  what an investigator types. Scores are normalized to 0–1 and tagged with `matched_on`
+  (`"name"` | `"alias"`) so the UI can show *why* and *how strongly* a record matched.
+- **Pure, testable service cores:** `scoring`, `search`, and `graph` are pure functions over a
+  repository — no I/O, no framework. Tests assert behavior, not plumbing.
+- **Thin routes → services → repository.** The fixture is parsed through Pydantic models on
+  startup (modern `lifespan`, not `on_event`) so any shape drift **fails loud** immediately.
+  A single `EntityNotFound` → `404` exception handler keeps routes free of error plumbing.
+- **Ranking:** top-N by score (then name), with **no hard threshold** — at 32 records, hiding
+  plausible candidates is worse than showing weak ones. A floor would be added at scale.
+- **Graph payload is shaped for the consumer:** `source`/`target`/`type` edges + `is_center`
+  nodes are exactly what a renderer needs (and match the d3 / React-Flow convention).
+
+**Frontend**
+- **Hand-rolled data layer over a query library.** `useSearch` and `useEntityGraph` own
+  debouncing, request cancellation (`AbortController`), and React 19 StrictMode safety directly —
+  proportionate for two endpoints, and it makes the race/cancellation handling explicit.
+- **Hand-rolled SVG radial graph over a graph library.** A pure `graph-layout.ts` (trig only,
+  unit-tested) feeds a plain non-interactive SVG — matching the "static rendering" requirement
+  without a heavy dependency.
+- **`react-router-dom`** for deep-linkable `/entity/:id`, **CSS Modules + design tokens** for
+  scoped styling with zero new build tooling.
+
+**Testing**
+- Backend: `pytest` over scoring/search/graph + a `TestClient` smoke suite (shapes, 404s, limit
+  bounds, CORS). Frontend: `vitest` on the pure `graph-layout`.
+
+---
+
+## Project layout
 
 ```
 .
-├── backend/                  # your FastAPI app
-├── frontend/                 # your React + TS app
-├── data/sdn_sample.json      # provided — do not modify
-└── README.md                 # this file (or your own — feel free to overwrite, but keep run instructions)
+├── package.json              # root runner (pnpm dev / test / check)
+├── data/sdn_sample.json      # provided fixture — do not modify
+├── backend/                  # FastAPI app + pytest suite (uv)
+│   └── app/{api,services,…}  # thin routes → pure services → repository
+└── frontend/                 # React + TS + Vite (pnpm)
+    └── src/{api,hooks,features,components,styles}
 ```
 
-Your top-level `README.md` (or `backend/README.md` + `frontend/README.md`) must include:
+---
 
-- Required versions (Python, Node).
-- Exact commands to install and run both apps locally.
-
-## Submission
-
-Reply to the email this was sent from with:
-
-- A link to a GitHub/GitLab repo, **or** a zip of the repo with the `.git` folder included (so we can see history).
-- Approximate hours spent.
-
-Good luck.
+**Approximate time spent:** ~2.5 hours.

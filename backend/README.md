@@ -1,6 +1,10 @@
 # Backend — Sanctions Entity Explorer
 
-FastAPI on Python 3.14+. Ships with a `/api/health` endpoint — build the rest on top.
+A read-only FastAPI service (Python 3.14+) over `../data/sdn_sample.json`: ranked fuzzy
+search and an entity relations graph.
+
+> To run the backend **and** frontend together with one command, see the root
+> [`README.md`](../README.md). The steps below run the backend on its own.
 
 ## Setup
 

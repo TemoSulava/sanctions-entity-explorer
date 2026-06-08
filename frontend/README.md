@@ -1,6 +1,11 @@
 # Frontend — Sanctions Entity Explorer
 
-React 19 + TypeScript + Vite. Strict TS, `noUncheckedIndexedAccess` on. Build on top — replace anything that doesn't fit.
+React 19 + TypeScript + Vite. Strict TS, `noUncheckedIndexedAccess` on. Search view +
+non-interactive radial graph view.
+
+> To run the frontend **and** backend together with one command, see the root
+> [`README.md`](../README.md). The steps below run the frontend on its own.
+> It expects the API at http://localhost:8000 (proxied via `/api`).
 
 ## Setup
 
@@ -27,4 +32,10 @@ pnpm build
 
 ```bash
 pnpm typecheck
+```
+
+## Test
+
+```bash
+pnpm test   # vitest: pure graph-layout unit tests
 ```
