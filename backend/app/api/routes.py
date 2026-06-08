@@ -5,7 +5,7 @@ response envelope. All business logic lives in `app.services`.
 from fastapi import APIRouter, Depends, Query
 
 from app.dependencies import get_repository
-from app.repository import EntityNotFound, EntityRepository
+from app.repository import EntityRepository
 from app.schemas import EntitySummary, GraphResponse, SearchResponse
 from app.services.graph import build_graph
 from app.services.search import search
@@ -33,10 +33,7 @@ def get_entity(
     entity_id: str,
     repo: EntityRepository = Depends(get_repository),
 ) -> EntitySummary:
-    entity = repo.get(entity_id)
-    if entity is None:
-        raise EntityNotFound(entity_id)
-    return EntitySummary.from_entity(entity)
+    return EntitySummary.from_entity(repo.get_or_raise(entity_id))
 
 
 @router.get("/entities/{entity_id}/graph", tags=["graph"])

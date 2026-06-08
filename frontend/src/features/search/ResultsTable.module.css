@@ -168,7 +168,7 @@
 .meterFill {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, var(--signal-dim, #8a6a23), var(--signal));
+  background: linear-gradient(90deg, var(--signal-dim), var(--signal));
   border-radius: 2px;
 }
 

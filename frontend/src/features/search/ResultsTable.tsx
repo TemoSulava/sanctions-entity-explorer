@@ -26,59 +26,62 @@ export function ResultsTable({ results }: ResultsTableProps) {
         <span>Match</span>
       </div>
 
-      {results.map((result) => (
-        <div
-          key={result.id}
-          className={styles.row}
-          role="button"
-          tabIndex={0}
-          aria-label={`Open ${result.name}, ${result.type}, match ${formatScore(result.score)}`}
-          onClick={() => open(result.id)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              open(result.id);
-            }
-          }}
-        >
-          <span className={styles.entity}>
-            <span className={styles.name}>{result.name}</span>
-            <span className={styles.id}>
-              {result.id}
-              {result.matched_on === "alias" ? (
-                <span className={styles.via}> · via alias</span>
-              ) : null}
+      {results.map((result) => {
+        const formattedScore = formatScore(result.score);
+        return (
+          <div
+            key={result.id}
+            className={styles.row}
+            role="button"
+            tabIndex={0}
+            aria-label={`Open ${result.name}, ${result.type}, match ${formattedScore}`}
+            onClick={() => open(result.id)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                open(result.id);
+              }
+            }}
+          >
+            <span className={styles.entity}>
+              <span className={styles.name}>{result.name}</span>
+              <span className={styles.id}>
+                {result.id}
+                {result.matched_on === "alias" ? (
+                  <span className={styles.via}> · via alias</span>
+                ) : null}
+              </span>
             </span>
-          </span>
 
-          <span className={styles.type}>
-            <span className={styles.badge} data-type={result.type}>
-              {result.type}
+            <span className={styles.type}>
+              <span className={styles.badge} data-type={result.type}>
+                {result.type}
+              </span>
             </span>
-          </span>
 
-          <span className={styles.country}>{result.primary_country ?? "—"}</span>
+            <span className={styles.country}>{result.primary_country ?? "—"}</span>
 
-          <span className={styles.programs}>
-            {result.programs.length > 0 ? (
-              result.programs.map((program) => (
-                <span key={program} className={styles.program}>
-                  {program}
-                </span>
-              ))
-            ) : (
-              <span className={styles.dim}>—</span>
-            )}
-          </span>
-
-          <span className={styles.match}>
-            <span className={styles.meter} aria-hidden="true">
-              <span className={styles.meterFill} style={{ width: formatScore(result.score) }} />
+            <span className={styles.programs}>
+              {result.programs.length > 0 ? (
+                result.programs.map((program) => (
+                  <span key={program} className={styles.program}>
+                    {program}
+                  </span>
+                ))
+              ) : (
+                <span className={styles.dim}>—</span>
+              )}
             </span>
-            <span className={styles.score}>{formatScore(result.score)}</span>
-          </span>
-        </div>
-      ))}
+
+            <span className={styles.match}>
+              <span className={styles.meter} aria-hidden="true">
+                <span className={styles.meterFill} style={{ width: formattedScore }} />
+              </span>
+              <span className={styles.score}>{formattedScore}</span>
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

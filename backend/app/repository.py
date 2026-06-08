@@ -39,3 +39,9 @@ class EntityRepository:
 
     def get(self, entity_id: str) -> Entity | None:
         return self._by_id.get(entity_id)
+
+    def get_or_raise(self, entity_id: str) -> Entity:
+        entity = self._by_id.get(entity_id)
+        if entity is None:
+            raise EntityNotFound(entity_id)
+        return entity

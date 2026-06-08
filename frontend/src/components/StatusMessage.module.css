@@ -43,7 +43,7 @@
 }
 
 .wrap[data-variant="error"] {
-  border-color: rgba(229, 72, 77, 0.4);
+  border-color: color-mix(in srgb, var(--alert) 40%, transparent);
 }
 
 .wrap[data-variant="error"] .glyph {

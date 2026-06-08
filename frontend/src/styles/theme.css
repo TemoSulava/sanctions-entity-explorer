@@ -16,6 +16,7 @@
 
   /* Signal */
   --signal: #e0a22b; /* amber / watchlist */
+  --signal-dim: #8a6a23; /* darkened amber for meter gradients */
   --signal-soft: rgba(224, 162, 43, 0.12);
   --alert: #e5484d; /* flagged center node */
 

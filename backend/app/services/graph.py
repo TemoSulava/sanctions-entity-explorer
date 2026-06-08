@@ -7,14 +7,12 @@ frontend can render without remapping. Directionality lives in the relation
 `type` (e.g. `operates` vs `operated_by`), so no separate direction field.
 """
 
-from app.repository import EntityNotFound, EntityRepository
+from app.repository import EntityRepository
 from app.schemas import EntitySummary, GraphEdge, GraphNode, GraphResponse
 
 
 def build_graph(repo: EntityRepository, entity_id: str) -> GraphResponse:
-    center = repo.get(entity_id)
-    if center is None:
-        raise EntityNotFound(entity_id)
+    center = repo.get_or_raise(entity_id)
 
     nodes = [GraphNode(id=center.id, name=center.name, type=center.type, is_center=True)]
     edges: list[GraphEdge] = []
