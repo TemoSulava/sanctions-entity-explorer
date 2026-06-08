@@ -1,0 +1,132 @@
+.page {
+  min-height: 100%;
+  padding: clamp(2rem, 5vh, 3.5rem) 1.5rem 4rem;
+}
+
+.shell {
+  width: 100%;
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+/* Back link */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  transition: color 120ms ease;
+}
+
+.back:hover,
+.back:focus-visible {
+  color: var(--signal);
+  outline: none;
+}
+
+/* Header */
+.header {
+  margin: 1.75rem 0 1.5rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  border: 1px solid currentColor;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.badge[data-type="organization"] {
+  color: var(--type-organization);
+}
+
+.badge[data-type="person"] {
+  color: var(--type-person);
+}
+
+.badge[data-type="vessel"] {
+  color: var(--type-vessel);
+}
+
+.title {
+  margin-top: 0.65rem;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-faint);
+}
+
+.id {
+  color: var(--text-muted);
+}
+
+/* Graph canvas */
+.canvas {
+  margin: 0;
+  padding: 1rem 1rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(224, 162, 43, 0.05), transparent 60%),
+    linear-gradient(180deg, var(--surface), var(--ink-850));
+  box-shadow: var(--shadow);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  padding: 0.85rem 0.4rem 0.4rem;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.swatch[data-type="organization"] {
+  color: var(--type-organization);
+}
+
+.swatch[data-type="person"] {
+  color: var(--type-person);
+}
+
+.swatch[data-type="vessel"] {
+  color: var(--type-vessel);
+}
