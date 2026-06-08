@@ -6,6 +6,7 @@ injection. Holds the parsed entities plus an id index for O(1) lookup.
 
 import json
 from pathlib import Path
+from typing import Self
 
 from app.schemas import Entity
 
@@ -19,7 +20,7 @@ class EntityRepository:
             raise ValueError("Fixture contains duplicate entity ids")
 
     @classmethod
-    def load_from_file(cls, path: Path) -> EntityRepository:
+    def load_from_file(cls, path: Path) -> Self:
         """Parse the whole fixture through `Entity` so shape drift fails loud."""
         records = json.loads(path.read_text(encoding="utf-8"))
         entities = [Entity.model_validate(record) for record in records]
