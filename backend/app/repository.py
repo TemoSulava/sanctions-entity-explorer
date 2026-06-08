@@ -11,6 +11,14 @@ from typing import Self
 from app.schemas import Entity
 
 
+class EntityNotFound(Exception):
+    """Raised when a lookup references an entity id that isn't in the fixture."""
+
+    def __init__(self, entity_id: str) -> None:
+        self.entity_id = entity_id
+        super().__init__(f"Entity {entity_id} not found")
+
+
 class EntityRepository:
     def __init__(self, entities: list[Entity]) -> None:
         self._entities = entities

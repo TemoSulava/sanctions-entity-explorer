@@ -22,13 +22,12 @@ def search(repo: EntityRepository, query: str, limit: int) -> list[SearchResult]
 
     results: list[SearchResult] = []
     for (entity_score, matched_on), entity in scored[:limit]:
-        primary_country = entity.countries[0] if entity.countries else None
         results.append(
             SearchResult(
                 id=entity.id,
                 name=entity.name,
                 type=entity.type,
-                primary_country=primary_country,
+                primary_country=entity.primary_country,
                 programs=entity.programs,
                 # Sort ran on the raw score; rounding here is for a clean payload
                 # and never reorders the already-sorted list.

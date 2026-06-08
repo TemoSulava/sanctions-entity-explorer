@@ -35,6 +35,11 @@ class Entity(BaseModel):
     remarks: str | None = None
     relations: list[Relation]
 
+    @property
+    def primary_country(self) -> str | None:
+        """First listed country (ISO2), or None when none are recorded."""
+        return self.countries[0] if self.countries else None
+
 
 # --- Search API DTOs ---
 
@@ -52,3 +57,33 @@ class SearchResult(BaseModel):
 class SearchResponse(BaseModel):
     query: str
     results: list[SearchResult]
+
+
+# --- Graph API DTOs ---
+
+
+class EntitySummary(BaseModel):
+    id: str
+    name: str
+    type: EntityType
+    primary_country: str | None
+
+
+class GraphNode(BaseModel):
+    id: str
+    name: str
+    type: EntityType
+    is_center: bool
+
+
+class GraphEdge(BaseModel):
+    source: str
+    target: str
+    type: str
+    note: str | None = None
+
+
+class GraphResponse(BaseModel):
+    center: EntitySummary
+    nodes: list[GraphNode]
+    edges: list[GraphEdge]
