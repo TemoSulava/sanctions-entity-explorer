@@ -4,6 +4,7 @@ import styles from "./RadialGraph.module.css";
 
 const NEIGHBOR_RADIUS = 9;
 const CENTER_RADIUS = 14;
+const GLOW_FILTER_ID = "node-glow";
 
 function formatRelation(type: string): string {
   return type.replace(/_/g, " ");
@@ -20,7 +21,7 @@ export function RadialGraph({ graph }: { graph: GraphResponse }) {
       aria-label={`Relationship graph for ${graph.center.name}`}
     >
       <defs>
-        <filter id="node-glow" x="-60%" y="-60%" width="220%" height="220%">
+        <filter id={GLOW_FILTER_ID} x="-60%" y="-60%" width="220%" height="220%">
           <feGaussianBlur stdDeviation="3.2" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
@@ -57,7 +58,7 @@ export function RadialGraph({ graph }: { graph: GraphResponse }) {
                 r={r}
                 data-type={node.type}
                 data-center={node.is_center}
-                filter={node.is_center ? "url(#node-glow)" : undefined}
+                filter={node.is_center ? `url(#${GLOW_FILTER_ID})` : undefined}
               />
               <text className={styles.nodeLabel} y={r + 16} data-center={node.is_center}>
                 {node.name}

@@ -4,13 +4,12 @@ import { ApiError } from "../api/client";
 import { getEntityGraph } from "../api/entities";
 import type { GraphResponse } from "../types";
 
-export type GraphStatus = "loading" | "success" | "error";
-
-export interface GraphState {
-  status: GraphStatus;
-  data: GraphResponse | null;
-  error: string | null;
-}
+// Discriminated union: `status === "success"` guarantees `data` is present, so
+// the view never has to re-check it.
+export type GraphState =
+  | { status: "loading"; data: null; error: null }
+  | { status: "success"; data: GraphResponse; error: null }
+  | { status: "error"; data: null; error: string };
 
 /**
  * Fetches one entity's relation graph. Aborts the in-flight request when `id`

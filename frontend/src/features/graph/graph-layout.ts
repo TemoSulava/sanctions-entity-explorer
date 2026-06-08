@@ -41,15 +41,16 @@ export function layoutGraph(graph: GraphResponse, options: LayoutOptions = {}): 
   const height = options.height ?? 560;
   const cx = width / 2;
   const cy = height / 2;
+  // Inset so the outermost node circle and its label stay inside the viewport.
   const radius = options.radius ?? Math.min(width, height) / 2 - 96;
 
   const positioned = new Map<string, PositionedNode>();
+  // The backend emits exactly one center node per graph.
+  const center = graph.nodes.find((node) => node.is_center);
   const neighbors = graph.nodes.filter((node) => !node.is_center);
 
-  for (const node of graph.nodes) {
-    if (node.is_center) {
-      positioned.set(node.id, { ...node, x: cx, y: cy });
-    }
+  if (center) {
+    positioned.set(center.id, { ...center, x: cx, y: cy });
   }
 
   neighbors.forEach((node, index) => {

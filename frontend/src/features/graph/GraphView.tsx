@@ -14,7 +14,7 @@ const LEGEND: { type: EntityType; label: string }[] = [
 
 export default function GraphView() {
   const { id } = useParams<{ id: string }>();
-  const { status, data, error } = useEntityGraph(id);
+  const state = useEntityGraph(id);
 
   return (
     <main className={styles.page}>
@@ -23,31 +23,36 @@ export default function GraphView() {
           ← Back to search
         </Link>
 
-        {status === "loading" ? <StatusMessage variant="loading" title="Loading graph…" /> : null}
-
-        {status === "error" ? (
-          <StatusMessage variant="error" title="Could not load graph" detail={error ?? undefined} />
+        {state.status === "loading" ? (
+          <StatusMessage variant="loading" title="Loading graph…" />
         ) : null}
 
-        {status === "success" && data ? (
+        {state.status === "error" ? (
+          <StatusMessage variant="error" title="Could not load graph" detail={state.error} />
+        ) : null}
+
+        {state.status === "success" ? (
           <>
             <header className={styles.header}>
-              <span className={styles.badge} data-type={data.center.type}>
-                {data.center.type}
+              <span className={styles.badge} data-type={state.data.center.type}>
+                {state.data.center.type}
               </span>
-              <h1 className={styles.title}>{data.center.name}</h1>
+              <h1 className={styles.title}>{state.data.center.name}</h1>
               <p className={styles.meta}>
-                <span className={styles.id}>{data.center.id}</span>
-                {data.center.primary_country ? <span>· {data.center.primary_country}</span> : null}
+                <span className={styles.id}>{state.data.center.id}</span>
+                {state.data.center.primary_country ? (
+                  <span>· {state.data.center.primary_country}</span>
+                ) : null}
                 <span>
-                  · {data.edges.length} {data.edges.length === 1 ? "relation" : "relations"}
+                  · {state.data.edges.length}{" "}
+                  {state.data.edges.length === 1 ? "relation" : "relations"}
                 </span>
               </p>
             </header>
 
-            {data.edges.length > 0 ? (
+            {state.data.edges.length > 0 ? (
               <figure className={styles.canvas}>
-                <RadialGraph graph={data} />
+                <RadialGraph graph={state.data} />
                 <figcaption className={styles.legend}>
                   {LEGEND.map((item) => (
                     <span key={item.type} className={styles.legendItem}>
